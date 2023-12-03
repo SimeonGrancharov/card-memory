@@ -6,6 +6,7 @@ import { Difficulty } from "../types/Difficulty";
 import { NewGameScreen } from "./NewGameScreen";
 import { Heading } from "./Heading";
 import { RestartButton } from "./RestartButton";
+import uuid from "react-native-uuid";
 
 const cardIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -25,6 +26,7 @@ function generateGrid(uniqueItems: number): CardT[] {
   const cardsToPlayWith = shuffleItems(cardIds).slice(-uniqueItems);
 
   return shuffleItems([...cardsToPlayWith, ...cardsToPlayWith]).map((id) => ({
+    uuid: uuid.v4() as string,
     id,
     isVisible: false,
     isGuessed: false,
@@ -187,7 +189,7 @@ export const Game = () => {
         >
           {grid?.map((item, index) => (
             <Card
-              key={index}
+              key={item.uuid}
               card={item}
               disabled={visibleCards?.length === 2}
               width={itemWidth}

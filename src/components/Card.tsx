@@ -1,4 +1,4 @@
-import { Pressable } from "react-native";
+import { Pressable, Image } from "react-native";
 import { CardT } from "../types/Card";
 import { images } from "../constants/images";
 import Animated, {
@@ -7,7 +7,10 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import FastImage from "react-native-fast-image";
 import { useEffect } from "react";
+
+const questionMark = require("../../assets/QuestionMark.png");
 
 export const Card = (props: {
   card: CardT;
@@ -60,7 +63,6 @@ export const Card = (props: {
             width: props.width,
             height: props.width,
             borderWidth: 1,
-            backgroundColor: "red",
             borderColor: "grey",
             backfaceVisibility: "hidden",
             borderRadius: 8,
@@ -69,7 +71,6 @@ export const Card = (props: {
         source={images[props.card.id]}
       />
       <Animated.Image
-        resizeMode="center"
         style={[
           backAnimatedStyle,
           {
@@ -85,7 +86,8 @@ export const Card = (props: {
             borderRadius: 8,
           },
         ]}
-        source={require("../../assets/QuestionMark.png")}
+        resizeMode="center"
+        source={questionMark}
       />
     </Pressable>
   );

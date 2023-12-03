@@ -55,7 +55,7 @@ export const NewGameScreen = (props: {
   return props.isVisible ? (
     <Animated.View
       entering={FadeIn}
-      exiting={FadeOut.duration(200)}
+      exiting={FadeOut.duration(500)}
       style={styles.mainContainer}
     >
       <Heading />
