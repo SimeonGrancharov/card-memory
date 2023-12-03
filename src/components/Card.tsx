@@ -71,6 +71,7 @@ export const Card = (props: {
         source={images[props.card.id]}
       />
       <Animated.Image
+        resizeMode="center"
         style={[
           backAnimatedStyle,
           {
@@ -84,9 +85,9 @@ export const Card = (props: {
             backfaceVisibility: "hidden",
             borderColor: "grey",
             borderRadius: 8,
+            overflow: "hidden",
           },
         ]}
-        resizeMode="center"
         source={questionMark}
       />
     </Pressable>
