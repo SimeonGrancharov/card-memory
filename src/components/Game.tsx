@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { CardT } from "../types/Card";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
 import { Card } from "./Card";
 import { Difficulty } from "../types/Difficulty";
 import { NewGameScreen } from "./NewGameScreen";
 import { Heading } from "./Heading";
+import { RestartButton } from "./RestartButton";
 
 const cardIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -79,7 +80,25 @@ export const Game = () => {
 
   const onCardPress = (index: number) => {
     const card = grid?.[index];
-    if (!card) {
+
+    if (!card || card.isGuessed) {
+      return;
+    }
+
+    if (card.isVisible && !card.isGuessed && visibleCards?.includes(card.id)) {
+      setVisibleCards(undefined);
+
+      setGrid(
+        (grid) =>
+          grid?.map((c, idx) =>
+            idx === index
+              ? {
+                  ...c,
+                  isVisible: false,
+                }
+              : c,
+          ),
+      );
       return;
     }
 
@@ -139,8 +158,20 @@ export const Game = () => {
         isVisible={shouldRequestNewGame}
         onDifficultySelect={createNewGame}
       />
-      <View>
+
+      <View
+        style={{
+          marginTop: 50,
+          flex: 1,
+          alignItems: "center",
+        }}
+      >
         <Heading />
+        <RestartButton
+          onPress={() => {
+            setShouldRequestNewGame(true);
+          }}
+        />
         <View
           style={[
             {
@@ -173,8 +204,9 @@ export const Game = () => {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginTop: 200,
+    marginTop: 50,
     justifyContent: "center",
+    alignItems: "center",
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",

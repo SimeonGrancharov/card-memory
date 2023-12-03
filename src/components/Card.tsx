@@ -29,14 +29,15 @@ export const Card = (props: {
     const rotation = interpolate(animatedValue.value, [0, 1], [-180, 0]);
 
     return {
-      transform: [{ rotateY: withTiming(`${rotation}deg`, { duration: 500 }) }],
+      transform: [{ rotateY: withTiming(`${rotation}deg`, { duration: 300 }) }],
     };
   }, []);
+
   const backAnimatedStyle = useAnimatedStyle(() => {
     const rotation = interpolate(animatedValue.value, [0, 1], [0, 180]);
 
     return {
-      transform: [{ rotateY: withTiming(`${rotation}deg`, { duration: 500 }) }],
+      transform: [{ rotateY: withTiming(`${rotation}deg`, { duration: 300 }) }],
     };
   }, []);
 
@@ -47,7 +48,7 @@ export const Card = (props: {
         height: props.width,
         position: "relative",
       }}
-      disabled={props.card.isVisible || props.disabled}
+      disabled={props.card.isGuessed || props.disabled}
       onPress={() => props.onPress(props.card.id)}
     >
       <Animated.Image
@@ -67,7 +68,8 @@ export const Card = (props: {
         ]}
         source={images[props.card.id]}
       />
-      <Animated.View
+      <Animated.Image
+        resizeMode="center"
         style={[
           backAnimatedStyle,
           {
@@ -83,6 +85,7 @@ export const Card = (props: {
             borderRadius: 8,
           },
         ]}
+        source={require("../../assets/QuestionMark.png")}
       />
     </Pressable>
   );

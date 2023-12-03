@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Difficulty } from "../types/Difficulty";
-import Animated, { FadeInUp, FadeOutDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Heading } from "./Heading";
 
 const styles = StyleSheet.create({
@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
+    paddingHorizontal: 50,
+    marginTop: 50,
+    flex: 1,
   },
   innerContainer: {
     flex: 1,
@@ -51,8 +54,8 @@ export const NewGameScreen = (props: {
 }) => {
   return props.isVisible ? (
     <Animated.View
-      entering={FadeInUp}
-      exiting={FadeOutDown}
+      entering={FadeIn}
+      exiting={FadeOut.duration(200)}
       style={styles.mainContainer}
     >
       <Heading />
