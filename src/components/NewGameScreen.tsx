@@ -2,6 +2,7 @@ import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Difficulty } from "../types/Difficulty";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Heading } from "./Heading";
+import React from "react";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -63,48 +64,50 @@ const styles = StyleSheet.create({
   },
 });
 
-export const NewGameScreen = (props: {
-  isVisible: boolean;
-  onDifficultySelect: (difficulty: Difficulty) => void;
-  shouldShowSuccess: boolean;
-}) => {
-  return props.isVisible ? (
-    <Animated.View
-      entering={FadeIn}
-      exiting={FadeOut.duration(500)}
-      style={styles.mainContainer}
-    >
-      <Heading />
-      {props.shouldShowSuccess ? (
-        <>
-          <View style={styles.successContainer}>
-            <Text style={styles.successTitle}>You won!</Text>
-            <Text style={styles.emoji}>🎉</Text>
-          </View>
-        </>
-      ) : null}
-      <View
-        style={[
-          styles.innerContainer,
-          props.shouldShowSuccess ? { justifyContent: "flex-start" } : null,
-        ]}
+export const NewGameScreen = React.memo(
+  (props: {
+    isVisible: boolean;
+    onDifficultySelect: (difficulty: Difficulty) => void;
+    shouldShowSuccess: boolean;
+  }) => {
+    return props.isVisible ? (
+      <Animated.View
+        entering={FadeIn}
+        exiting={FadeOut.duration(500)}
+        style={styles.mainContainer}
       >
-        <Text style={styles.subHeading}>
-          {props.shouldShowSuccess ? "Play again?" : "Select difficulty"}
-        </Text>
-        <View style={styles.optionsContainer}>
-          {(["easy", "medium", "hard"] as const).map((dif) => (
-            <TouchableOpacity
-              activeOpacity={0.5}
-              key={dif}
-              onPress={() => props.onDifficultySelect(dif)}
-              style={styles.option}
-            >
-              <Text style={styles.optionText}>{dif.toUpperCase()}</Text>
-            </TouchableOpacity>
-          ))}
+        <Heading />
+        {props.shouldShowSuccess ? (
+          <>
+            <View style={styles.successContainer}>
+              <Text style={styles.successTitle}>You won!</Text>
+              <Text style={styles.emoji}>🎉</Text>
+            </View>
+          </>
+        ) : null}
+        <View
+          style={[
+            styles.innerContainer,
+            props.shouldShowSuccess ? { justifyContent: "flex-start" } : null,
+          ]}
+        >
+          <Text style={styles.subHeading}>
+            {props.shouldShowSuccess ? "Play again?" : "Select difficulty"}
+          </Text>
+          <View style={styles.optionsContainer}>
+            {(["easy", "medium", "hard"] as const).map((dif) => (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                key={dif}
+                onPress={() => props.onDifficultySelect(dif)}
+                style={styles.option}
+              >
+                <Text style={styles.optionText}>{dif.toUpperCase()}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
-    </Animated.View>
-  ) : null;
-};
+      </Animated.View>
+    ) : null;
+  },
+);

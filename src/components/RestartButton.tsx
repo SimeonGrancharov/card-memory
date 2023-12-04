@@ -1,6 +1,7 @@
+import React from "react";
 import { View, Image, TouchableOpacity, Text } from "react-native";
 
-export const RestartButton = (props: { onPress: () => void }) => {
+export const RestartButton = React.memo((props: { onPress: () => void }) => {
   return (
     <>
       <TouchableOpacity
@@ -30,4 +31,4 @@ export const RestartButton = (props: { onPress: () => void }) => {
       </TouchableOpacity>
     </>
   );
-};
+});
