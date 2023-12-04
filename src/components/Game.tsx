@@ -143,11 +143,6 @@ export const Game = () => {
 
   return (
     <>
-      <NewGameScreen
-        isVisible={shouldRequestNewGame}
-        onDifficultySelect={onDifficultyChosen}
-      />
-
       <View
         style={{
           marginTop: 50,
@@ -183,6 +178,10 @@ export const Game = () => {
           ))}
         </View>
       </View>
+      <NewGameScreen
+        isVisible={shouldRequestNewGame}
+        onDifficultySelect={onDifficultyChosen}
+      />
     </>
   );
 };

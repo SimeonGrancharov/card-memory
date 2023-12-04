@@ -1,4 +1,4 @@
-import { Pressable } from "react-native";
+import { Platform, Pressable, Image } from "react-native";
 import { CardT } from "../types/Card";
 import { images } from "../constants/images";
 import Animated, {
@@ -29,17 +29,24 @@ export const Card = (props: {
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotation = interpolate(animatedValue.value, [0, 1], [-180, 0]);
-
+    const opacity = interpolate(animatedValue.value, [0, 1], [0, 1]);
     return {
       transform: [{ rotateY: withTiming(`${rotation}deg`, { duration: 300 }) }],
+      // We have that beautiful backfaceVisibility not working on android
+      opacity:
+        Platform.OS === "android" ? withTiming(opacity, { duration: 300 }) : 1,
     };
   }, []);
 
   const backAnimatedStyle = useAnimatedStyle(() => {
     const rotation = interpolate(animatedValue.value, [0, 1], [0, 180]);
+    const opacity = interpolate(animatedValue.value, [0, 1], [1, 0]);
 
     return {
       transform: [{ rotateY: withTiming(`${rotation}deg`, { duration: 300 }) }],
+      // We have that beautiful backfaceVisibility not working on android
+      opacity:
+        Platform.OS === "android" ? withTiming(opacity, { duration: 300 }) : 1,
     };
   }, []);
 
@@ -68,8 +75,7 @@ export const Card = (props: {
         ]}
         source={images[props.card.id]}
       />
-      <Animated.Image
-        resizeMode="center"
+      <Animated.View
         style={[
           backAnimatedStyle,
           {
@@ -80,14 +86,25 @@ export const Card = (props: {
             width: props.width,
             height: props.width,
             borderWidth: 1,
+            backgroundColor: "white",
             backfaceVisibility: "hidden",
             borderColor: "grey",
             borderRadius: 8,
             overflow: "hidden",
+            alignItems: "center",
+            justifyContent: "center",
           },
         ]}
-        source={questionMark}
-      />
+      >
+        <Image
+          source={questionMark}
+          style={{
+            // Preserve the aspect ratio
+            width: (props.width / 2) * 0.76,
+            height: props.width / 2,
+          }}
+        />
+      </Animated.View>
     </Pressable>
   );
 };
