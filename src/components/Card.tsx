@@ -15,7 +15,7 @@ const questionMark = require("../../assets/QuestionMark.png");
 export const Card = React.memo(
   (props: {
     card: CardT;
-    onPress: (id: CardT["id"]) => void;
+    onPress: (card: CardT) => void;
     disabled: boolean;
     width: number;
   }) => {
@@ -67,7 +67,7 @@ export const Card = React.memo(
           height: props.width,
         }}
         disabled={props.card.isGuessed || props.disabled}
-        onPress={() => props.onPress(props.card.id)}
+        onPress={() => props.onPress(props.card)}
       >
         <Animated.Image
           style={[

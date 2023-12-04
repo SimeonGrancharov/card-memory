@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { CardT } from "../types/Card";
 import { StyleSheet, View } from "react-native";
 import { Card } from "./Card";
@@ -20,52 +20,45 @@ export const Game = () => {
 
   useVisibleCardsUpdated(visibleCards, setGrid, setVisibleCards);
 
-  const onCardPress = useCallback(
-    (index: number) => {
-      const card = grid?.[index];
+  const onCardPress = useCallback((card: CardT) => {
+    if (!card || card.isGuessed) {
+      return;
+    }
 
-      if (!card || card.isGuessed) {
-        return;
-      }
+    // If the currently opened card is pressed => flip it again and reset the
+    // turn
+    if (card.isVisible && !card.isGuessed) {
+      setVisibleCards(undefined);
 
-      // If the currently opened card is pressed => flip it again and reset the
-      // turn
-      if (
-        card.isVisible &&
-        !card.isGuessed &&
-        visibleCards?.includes(card.id)
-      ) {
-        setVisibleCards(undefined);
+      setGrid(
+        (grid) =>
+          grid?.map((c) =>
+            c.uuid === card.uuid
+              ? {
+                  ...c,
+                  isVisible: false,
+                }
+              : c,
+          ),
+      );
+    } else {
+      setVisibleCards((visibleCards) =>
+        visibleCards ? [...visibleCards, card.id] : [card.id],
+      );
 
-        setGrid(
-          (grid) =>
-            grid?.map((c, idx) =>
-              idx === index
-                ? {
-                    ...c,
-                    isVisible: false,
-                  }
-                : c,
-            ),
-        );
-      } else {
-        setVisibleCards(visibleCards ? [...visibleCards, card.id] : [card.id]);
-
-        setGrid(
-          (grid) =>
-            grid?.map((c, idx) =>
-              idx === index
-                ? {
-                    ...c,
-                    isVisible: true,
-                  }
-                : c,
-            ),
-        );
-      }
-    },
-    [visibleCards, grid],
-  );
+      setGrid(
+        (grid) =>
+          grid?.map((c) =>
+            c.uuid === card.uuid
+              ? {
+                  ...c,
+                  isVisible: true,
+                }
+              : c,
+          ),
+      );
+    }
+  }, []);
 
   const startNewGame = useCallback((difficulty: Difficulty) => {
     let uniqueCards: number = 0;
@@ -116,15 +109,13 @@ export const Game = () => {
             styles.mainContainer,
           ]}
         >
-          {grid?.map((item, index) => (
+          {grid?.map((item) => (
             <Card
               key={item.uuid}
               card={item}
               disabled={visibleCards?.length === 2}
               width={itemWidth}
-              onPress={() => {
-                onCardPress(index);
-              }}
+              onPress={onCardPress}
             />
           ))}
         </View>
