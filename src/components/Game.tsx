@@ -10,6 +10,7 @@ import { generateGrid } from "../utils/generateGrid";
 import { useShouldRequestNewGame } from "../hooks/useShouldRequestNewGame";
 import { COLUMN_GAP, MAIN_CONTAINER_PADDING } from "../constants/styles";
 import { useContainerAndItemsWidth } from "../hooks/useContainerAndItemWidth";
+import { useVisibleCardsUpdated } from "../hooks/useVisibleItemsUpdate";
 
 export const Game = () => {
   const [grid, setGrid] = useState<CardT[] | undefined>(undefined);
@@ -17,45 +18,7 @@ export const Game = () => {
   const [shouldRequestNewGame, setShouldRequestNewGame] =
     useShouldRequestNewGame(grid);
 
-  useEffect(() => {
-    if (!visibleCards) {
-      return;
-    }
-
-    if (visibleCards.length === 2) {
-      if (visibleCards[0] === visibleCards[1]) {
-        // Found two identical cards
-        setGrid(
-          (grid) =>
-            grid?.map((c) =>
-              c.id === visibleCards[0]
-                ? {
-                    ...c,
-                    isGuessed: true,
-                  }
-                : c,
-            ),
-        );
-        setVisibleCards(undefined);
-      } else {
-        // Non-indentical cards => discard choices
-        setTimeout(() => {
-          setGrid(
-            (grid) =>
-              grid?.map((c) =>
-                c.id === visibleCards[0] || c.id === visibleCards[1]
-                  ? {
-                      ...c,
-                      isVisible: false,
-                    }
-                  : c,
-              ),
-          );
-          setVisibleCards(undefined);
-        }, 2000);
-      }
-    }
-  }, [visibleCards?.length]);
+  useVisibleCardsUpdated(visibleCards, setGrid, setVisibleCards);
 
   const onCardPress = useCallback(
     (index: number) => {
