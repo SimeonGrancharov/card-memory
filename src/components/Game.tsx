@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { CardT } from "../types/Card";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Card } from "./Card";
 import { Difficulty } from "../types/Difficulty";
 import { NewGameScreen } from "./NewGameScreen";
 import { Heading } from "./Heading";
 import { RestartButton } from "./RestartButton";
 import { generateGrid } from "../utils/generateGrid";
+import { useShouldRequestNewGame } from "../hooks/useShouldRequestNewGame";
+import { COLUMN_GAP, MAIN_CONTAINER_PADDING } from "../constants/styles";
+import { useContainerAndItemsWidth } from "../hooks/useContainerAndItemWidth";
 
 export const Game = () => {
   const [grid, setGrid] = useState<CardT[] | undefined>(undefined);
   const [visibleCards, setVisibleCards] = useState<CardT["id"][] | undefined>();
-
   const [shouldRequestNewGame, setShouldRequestNewGame] =
-    useState<boolean>(true);
+    useShouldRequestNewGame(grid);
 
   useEffect(() => {
     if (!visibleCards) {
@@ -55,14 +57,6 @@ export const Game = () => {
     }
   }, [visibleCards?.length]);
 
-  useEffect(() => {
-    if (grid?.every((card) => card.isGuessed)) {
-      setTimeout(() => {
-        setShouldRequestNewGame(true);
-      }, 500);
-    }
-  }, [grid]);
-
   const onCardPress = useCallback(
     (index: number) => {
       const card = grid?.[index];
@@ -91,24 +85,23 @@ export const Game = () => {
                 : c,
             ),
         );
-        return;
+      } else {
+        setVisibleCards(visibleCards ? [...visibleCards, card.id] : [card.id]);
+
+        setGrid(
+          (grid) =>
+            grid?.map((c, idx) =>
+              idx === index
+                ? {
+                    ...c,
+                    isVisible: true,
+                  }
+                : c,
+            ),
+        );
       }
-
-      setVisibleCards(visibleCards ? [...visibleCards, card.id] : [card.id]);
-
-      setGrid(
-        (grid) =>
-          grid?.map((c, idx) =>
-            idx === index
-              ? {
-                  ...c,
-                  isVisible: true,
-                }
-              : c,
-          ),
-      );
     },
-    [visibleCards, grid, setGrid, setVisibleCards],
+    [visibleCards, grid],
   );
 
   const startNewGame = useCallback((difficulty: Difficulty) => {
@@ -137,17 +130,7 @@ export const Game = () => {
     setShouldRequestNewGame(true);
   }, []);
 
-  const numberOfCols = (grid?.length ?? 0) / 4;
-  const padding = 10;
-  const colGap = 10;
-
-  const itemWidth = Math.min(
-    (Dimensions.get("window").width -
-      2 * padding -
-      (numberOfCols - 1) * colGap) /
-      numberOfCols,
-    100,
-  );
+  const { containerWidth, itemWidth } = useContainerAndItemsWidth(grid);
 
   return (
     <>
@@ -163,12 +146,9 @@ export const Game = () => {
         <View
           style={[
             {
-              paddingHorizontal: padding,
-              width:
-                numberOfCols * itemWidth +
-                (numberOfCols - 1) * colGap +
-                2 * padding,
-              columnGap: colGap,
+              paddingHorizontal: MAIN_CONTAINER_PADDING,
+              width: containerWidth,
+              columnGap: COLUMN_GAP,
             },
             styles.mainContainer,
           ]}
