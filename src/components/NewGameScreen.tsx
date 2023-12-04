@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   subHeading: {
     fontSize: 23,
@@ -46,11 +46,27 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontWeight: "500",
   },
+
+  successContainer: {
+    marginVertical: 50,
+  },
+  successTitle: {
+    fontSize: 50,
+    lineHeight: 60,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  emoji: {
+    fontSize: 80,
+    lineHeight: 90,
+    textAlign: "center",
+  },
 });
 
 export const NewGameScreen = (props: {
   isVisible: boolean;
   onDifficultySelect: (difficulty: Difficulty) => void;
+  shouldShowSuccess: boolean;
 }) => {
   return props.isVisible ? (
     <Animated.View
@@ -59,8 +75,23 @@ export const NewGameScreen = (props: {
       style={styles.mainContainer}
     >
       <Heading />
-      <View style={styles.innerContainer}>
-        <Text style={styles.subHeading}>Select difficulty</Text>
+      {props.shouldShowSuccess ? (
+        <>
+          <View style={styles.successContainer}>
+            <Text style={styles.successTitle}>You won!</Text>
+            <Text style={styles.emoji}>🎉</Text>
+          </View>
+        </>
+      ) : null}
+      <View
+        style={[
+          styles.innerContainer,
+          props.shouldShowSuccess ? { justifyContent: "flex-start" } : null,
+        ]}
+      >
+        <Text style={styles.subHeading}>
+          {props.shouldShowSuccess ? "Play again?" : "Select difficulty"}
+        </Text>
         <View style={styles.optionsContainer}>
           {(["easy", "medium", "hard"] as const).map((dif) => (
             <TouchableOpacity

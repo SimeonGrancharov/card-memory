@@ -55,6 +55,14 @@ export const Game = () => {
     }
   }, [visibleCards?.length]);
 
+  useEffect(() => {
+    if (grid?.every((card) => card.isGuessed)) {
+      setTimeout(() => {
+        setShouldRequestNewGame(true);
+      }, 500);
+    }
+  }, [grid]);
+
   const onCardPress = useCallback(
     (index: number) => {
       const card = grid?.[index];
@@ -103,7 +111,7 @@ export const Game = () => {
     [visibleCards, grid, setGrid, setVisibleCards],
   );
 
-  const onDifficultyChosen = useCallback((difficulty: Difficulty) => {
+  const startNewGame = useCallback((difficulty: Difficulty) => {
     let uniqueCards: number = 0;
 
     switch (difficulty) {
@@ -180,7 +188,8 @@ export const Game = () => {
       </View>
       <NewGameScreen
         isVisible={shouldRequestNewGame}
-        onDifficultySelect={onDifficultyChosen}
+        onDifficultySelect={startNewGame}
+        shouldShowSuccess={Boolean(grid?.every((card) => card.isGuessed))}
       />
     </>
   );
