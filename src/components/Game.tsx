@@ -63,6 +63,8 @@ export const Game = () => {
         return;
       }
 
+      // If the currently opened card is pressed => flip it again and reset the
+      // turn
       if (
         card.isVisible &&
         !card.isGuessed &&
@@ -98,10 +100,10 @@ export const Game = () => {
           ),
       );
     },
-    [visibleCards, grid],
+    [visibleCards, grid, setGrid, setVisibleCards],
   );
 
-  const createNewGame = useCallback((difficulty: Difficulty) => {
+  const onDifficultyChosen = useCallback((difficulty: Difficulty) => {
     let uniqueCards: number = 0;
 
     switch (difficulty) {
@@ -123,6 +125,10 @@ export const Game = () => {
     setShouldRequestNewGame(false);
   }, []);
 
+  const onRestartPress = useCallback(() => {
+    setShouldRequestNewGame(true);
+  }, []);
+
   const numberOfCols = (grid?.length ?? 0) / 4;
   const padding = 10;
   const colGap = 10;
@@ -139,7 +145,7 @@ export const Game = () => {
     <>
       <NewGameScreen
         isVisible={shouldRequestNewGame}
-        onDifficultySelect={createNewGame}
+        onDifficultySelect={onDifficultyChosen}
       />
 
       <View
@@ -150,11 +156,7 @@ export const Game = () => {
         }}
       >
         <Heading />
-        <RestartButton
-          onPress={() => {
-            setShouldRequestNewGame(true);
-          }}
-        />
+        <RestartButton onPress={onRestartPress} />
         <View
           style={[
             {

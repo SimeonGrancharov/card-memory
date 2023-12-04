@@ -1,4 +1,4 @@
-import { Pressable, Image } from "react-native";
+import { Pressable } from "react-native";
 import { CardT } from "../types/Card";
 import { images } from "../constants/images";
 import Animated, {
@@ -7,8 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import FastImage from "react-native-fast-image";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 const questionMark = require("../../assets/QuestionMark.png");
 
@@ -49,7 +48,6 @@ export const Card = (props: {
       style={{
         width: props.width,
         height: props.width,
-        position: "relative",
       }}
       disabled={props.card.isGuessed || props.disabled}
       onPress={() => props.onPress(props.card.id)}
