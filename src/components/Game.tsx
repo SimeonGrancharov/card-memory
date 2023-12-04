@@ -1,37 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CardT } from "../types/Card";
-import { Dimensions, SafeAreaView, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { Card } from "./Card";
 import { Difficulty } from "../types/Difficulty";
 import { NewGameScreen } from "./NewGameScreen";
 import { Heading } from "./Heading";
 import { RestartButton } from "./RestartButton";
-import uuid from "react-native-uuid";
-
-const cardIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-function shuffleItems<T>(items: T[]): T[] {
-  const result: T[] = [...items];
-
-  for (let index = items.length - 1; index > 0; index--) {
-    const newIndex = Math.floor(Math.random() * (index + 1));
-
-    [result[index], result[newIndex]] = [result[newIndex], result[index]];
-  }
-
-  return result;
-}
-
-function generateGrid(uniqueItems: number): CardT[] {
-  const cardsToPlayWith = shuffleItems(cardIds).slice(-uniqueItems);
-
-  return shuffleItems([...cardsToPlayWith, ...cardsToPlayWith]).map((id) => ({
-    uuid: uuid.v4() as string,
-    id,
-    isVisible: false,
-    isGuessed: false,
-  }));
-}
+import { generateGrid } from "../utils/generateGrid";
 
 export const Game = () => {
   const [grid, setGrid] = useState<CardT[] | undefined>(undefined);
@@ -80,15 +55,36 @@ export const Game = () => {
     }
   }, [visibleCards?.length]);
 
-  const onCardPress = (index: number) => {
-    const card = grid?.[index];
+  const onCardPress = useCallback(
+    (index: number) => {
+      const card = grid?.[index];
 
-    if (!card || card.isGuessed) {
-      return;
-    }
+      if (!card || card.isGuessed) {
+        return;
+      }
 
-    if (card.isVisible && !card.isGuessed && visibleCards?.includes(card.id)) {
-      setVisibleCards(undefined);
+      if (
+        card.isVisible &&
+        !card.isGuessed &&
+        visibleCards?.includes(card.id)
+      ) {
+        setVisibleCards(undefined);
+
+        setGrid(
+          (grid) =>
+            grid?.map((c, idx) =>
+              idx === index
+                ? {
+                    ...c,
+                    isVisible: false,
+                  }
+                : c,
+            ),
+        );
+        return;
+      }
+
+      setVisibleCards(visibleCards ? [...visibleCards, card.id] : [card.id]);
 
       setGrid(
         (grid) =>
@@ -96,53 +92,38 @@ export const Game = () => {
             idx === index
               ? {
                   ...c,
-                  isVisible: false,
+                  isVisible: true,
                 }
               : c,
           ),
       );
-      return;
-    }
+    },
+    [visibleCards, grid],
+  );
 
-    setVisibleCards(visibleCards ? [...visibleCards, card.id] : [card.id]);
-
-    setGrid(
-      (grid) =>
-        grid?.map((c, idx) =>
-          idx === index
-            ? {
-                ...c,
-                isVisible: true,
-              }
-            : c,
-        ),
-    );
-  };
-
-  const createNewGame = (difficulty: Difficulty) => {
-    let uniqueItems: number = 0;
+  const createNewGame = useCallback((difficulty: Difficulty) => {
+    let uniqueCards: number = 0;
 
     switch (difficulty) {
       case "easy": {
-        uniqueItems = 4;
+        uniqueCards = 4;
         break;
       }
       case "medium": {
-        uniqueItems = 6;
+        uniqueCards = 6;
         break;
       }
       case "hard": {
-        uniqueItems = 8;
+        uniqueCards = 8;
         break;
       }
     }
 
-    setGrid(generateGrid(uniqueItems));
+    setGrid(generateGrid(uniqueCards));
     setShouldRequestNewGame(false);
-  };
+  }, []);
 
   const numberOfCols = (grid?.length ?? 0) / 4;
-
   const padding = 10;
   const colGap = 10;
 

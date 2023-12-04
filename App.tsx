@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Game } from "./src/components/Game";
 
 export default function App() {
