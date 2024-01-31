@@ -25,6 +25,7 @@ export function useVisibleCardsUpdated(
                 : c,
             ),
         );
+
         setVisibleCards(undefined);
       } else {
         // Non-indentical cards => discard choices

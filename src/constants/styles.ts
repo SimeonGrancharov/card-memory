@@ -1,2 +1,2 @@
-export const MAIN_CONTAINER_PADDING = 10;
-export const COLUMN_GAP = 10;
+export const MainContainerPadding = 10;
+export const ColumnGap = 10;

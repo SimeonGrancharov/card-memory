@@ -8,7 +8,7 @@ import { Heading } from "./Heading";
 import { RestartButton } from "./RestartButton";
 import { generateGrid } from "../utils/generateGrid";
 import { useShouldRequestNewGame } from "../hooks/useShouldRequestNewGame";
-import { COLUMN_GAP, MAIN_CONTAINER_PADDING } from "../constants/styles";
+import { ColumnGap, MainContainerPadding } from "../constants/styles";
 import { useContainerAndItemsWidth } from "../hooks/useContainerAndItemWidth";
 import { useVisibleCardsUpdated } from "../hooks/useVisibleItemsUpdate";
 
@@ -102,9 +102,9 @@ export const Game = () => {
         <View
           style={[
             {
-              paddingHorizontal: MAIN_CONTAINER_PADDING,
+              paddingHorizontal: MainContainerPadding,
               width: containerWidth,
-              columnGap: COLUMN_GAP,
+              columnGap: ColumnGap,
             },
             styles.mainContainer,
           ]}
